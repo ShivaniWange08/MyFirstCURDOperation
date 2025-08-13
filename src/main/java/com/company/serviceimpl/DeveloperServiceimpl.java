@@ -2,11 +2,14 @@ package com.company.serviceimpl;
 
 import com.company.entity.Developer;
 import com.company.helper.DeveloperIdGenerator;
+import com.company.helper.GetExcelData;
 import com.company.repositories.DeveloperRepository;
 import com.company.service.DeveloperService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -98,5 +101,32 @@ public class DeveloperServiceimpl implements DeveloperService {
                 .filter(developer -> developer.getGender().equalsIgnoreCase(gender))
                 .collect(Collectors.toList());
         return filteredList;
+    }
+
+    //check file is of excel type or not
+
+
+    @Override
+    public String saveExcelFormat(MultipartFile file) {
+        try {
+          List<Developer> developers = GetExcelData.convertExcelToDeveloperList(file.getInputStream());
+            System.out.println("Developers read from Excel: " + developers.size());
+            developers.forEach(System.out::println);
+            for (Developer d : developers) {
+                d.setDeveloperId(DeveloperIdGenerator.generatedDeveloperId(d));
+            }
+          developerRepository.saveAll(developers);
+            return "Excel data processed successfully";
+        } catch (RuntimeException e) { // Catch validation errors
+            return "Excel Validation Error: " + e.getMessage();
+        } catch (IOException e) {
+            return "Failed to read Excel file: " + e.getMessage();
+        }
+    }
+
+    @Override
+    public List<Developer> excelToDeveloperList() {
+     List<Developer> developerList = developerRepository.findAll();
+     return developerList;
     }
 }

@@ -9,6 +9,9 @@ public class DeveloperIdGenerator {
         String lName = developer.getLNAme();
         int YOB = developer.getYearOfBirth();
 
+        if (lName == null || lName.isEmpty()) {
+            throw new IllegalArgumentException("Last name cannot be null or empty");
+        }
         char a = lName.charAt(0);
         int  b = YOB % 100;
 

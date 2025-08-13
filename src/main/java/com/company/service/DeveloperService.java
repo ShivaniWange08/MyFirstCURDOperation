@@ -1,6 +1,7 @@
 package com.company.service;
 
 import com.company.entity.Developer;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,4 +24,8 @@ public interface DeveloperService {
     List<Developer> filterDataByGender(String gender);
 
     List<Developer> filterByCityAndGender(String city, String gender);
+
+    String saveExcelFormat(MultipartFile file);
+
+    List<Developer> excelToDeveloperList();
 }
