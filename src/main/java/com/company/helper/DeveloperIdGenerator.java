@@ -5,8 +5,8 @@ import com.company.entity.Developer;
 public class DeveloperIdGenerator {
 
     public static String generatedDeveloperId(Developer developer){
-        String fName = developer.getfName();
-        String lName = developer.getlNAme();
+        String fName = developer.getFName();
+        String lName = developer.getLNAme();
         int YOB = developer.getYearOfBirth();
 
         char a = lName.charAt(0);

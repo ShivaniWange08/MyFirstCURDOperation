@@ -54,8 +54,8 @@ public class DeveloperServiceimpl implements DeveloperService {
                 .orElseThrow(()-> new NullPointerException("Developer with id are not found in database" +id));
         System.err.println("old developer from db " +developer);
         System.err.println("Developer object with value to be updated " +newDeveloper);
-        developer.setfName(newDeveloper.getfName());
-        developer.setlNAme(newDeveloper.getlNAme());
+        developer.setFName(newDeveloper.getFName());
+        developer.setLNAme(newDeveloper.getLNAme());
         developer.setAge(newDeveloper.getAge());
         developer.setCity(newDeveloper.getCity());
         developer.setSalary(newDeveloper.getSalary());

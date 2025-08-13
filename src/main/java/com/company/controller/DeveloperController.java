@@ -22,7 +22,7 @@ public class DeveloperController {
         System.err.println(developer);
         developerService.saveDeveloper(developer);
 
-        String msg =  "Heyy..." + developer.getfName() +", Your profile has been successfully added," + " and Your DeveloperId is : " +developer.getDeveloperId();
+        String msg =  "Heyy..." + developer.getFName() +", Your profile has been successfully added," + " and Your DeveloperId is : " +developer.getDeveloperId();
         return new ResponseEntity<>(msg, HttpStatus.CREATED);
     }
 
