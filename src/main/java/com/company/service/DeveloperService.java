@@ -3,6 +3,7 @@ package com.company.service;
 import com.company.entity.Developer;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 public interface DeveloperService {
@@ -28,4 +29,6 @@ public interface DeveloperService {
     String saveExcelFormat(MultipartFile file);
 
     List<Developer> excelToDeveloperList();
+
+    ByteArrayInputStream databaseToExcel();
 }

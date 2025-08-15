@@ -2,6 +2,7 @@ package com.company.serviceimpl;
 
 import com.company.entity.Developer;
 import com.company.helper.DeveloperIdGenerator;
+import com.company.helper.ExportExcelData;
 import com.company.helper.GetExcelData;
 import com.company.repositories.DeveloperRepository;
 import com.company.service.DeveloperService;
@@ -9,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -128,5 +131,17 @@ public class DeveloperServiceimpl implements DeveloperService {
     public List<Developer> excelToDeveloperList() {
      List<Developer> developerList = developerRepository.findAll();
      return developerList;
+    }
+
+    @Override
+    public ByteArrayInputStream databaseToExcel() {
+        try {
+            List<Developer> developerList = developerRepository.findAll();
+            return ExportExcelData.databasetoExcel(developerList);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to export data to Excel", e);
+        } catch (GeneralSecurityException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

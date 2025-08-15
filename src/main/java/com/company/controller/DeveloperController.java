@@ -3,18 +3,22 @@ package com.company.controller;
 import com.company.entity.Developer;
 import com.company.helper.GetExcelData;
 import com.company.service.DeveloperService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/developer")
@@ -111,4 +115,50 @@ public class DeveloperController {
 
         return new ResponseEntity<>(developerList, HttpStatus.OK);
     }
+
+//    @GetMapping("/download")
+//    public ResponseEntity<Resource> databaseToExcel(){
+//        // Generate Excel from DB
+//        ByteArrayInputStream databaseToExcel = developerService.databaseToExcel();
+//        // Wrap it in InputStreamResource
+//        InputStreamResource resource = new InputStreamResource(databaseToExcel);
+//
+//        return ResponseEntity.ok()
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=developerData.xlsx")
+//                .contentType(MediaType.parseMediaType(
+//                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+//                .body(resource);
+//    }
+
+    @GetMapping("/download")
+    public ResponseEntity<?> databaseToExcel(HttpServletRequest request) {
+        ByteArrayInputStream excelStream = developerService.databaseToExcel();
+
+        String acceptHeader = request.getHeader("Accept");
+
+        if (acceptHeader != null && acceptHeader.contains("application/json")) {
+            try {
+                byte[] bytes = excelStream.readAllBytes();
+                String base64 = Base64.getEncoder().encodeToString(bytes);
+
+                Map<String, String> response = new HashMap<>();
+                response.put("fileName", "developerData.xlsx");
+                response.put("fileData", base64);
+
+                return ResponseEntity.ok(response);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to read Excel bytes", e);
+            }
+        }
+
+        InputStreamResource resource = new InputStreamResource(excelStream);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=developerData.xlsx")
+                .contentType(MediaType.parseMediaType(
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(resource);
+    }
 }
+
+
