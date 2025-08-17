@@ -1,9 +1,11 @@
 package com.company.serviceimpl;
 
+import com.company.entity.Admin;
 import com.company.entity.Developer;
-import com.company.helper.DeveloperIdGenerator;
-import com.company.helper.ExportExcelData;
-import com.company.helper.GetExcelData;
+import com.company.helperDeveloper.DeveloperIdGenerator;
+import com.company.helperDeveloper.ExportExcelData;
+import com.company.helperDeveloper.GetExcelData;
+import com.company.repositories.AdminRepository;
 import com.company.repositories.DeveloperRepository;
 import com.company.service.DeveloperService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,6 +24,9 @@ public class DeveloperServiceimpl implements DeveloperService {
 
     @Autowired
     private DeveloperRepository developerRepository;
+
+    @Autowired
+    private AdminRepository adminRepository;
 
     @Override
     public String saveDeveloper(Developer developer) {
@@ -32,8 +38,6 @@ public class DeveloperServiceimpl implements DeveloperService {
         Developer savedDeveloper = developerRepository.save(developer);
 
         return "developer saved";
-
-
     }
 
     @Override
@@ -134,14 +138,20 @@ public class DeveloperServiceimpl implements DeveloperService {
     }
 
     @Override
-    public ByteArrayInputStream databaseToExcel() {
-        try {
+    public ByteArrayInputStream databaseToExcel(int admin_id) throws IOException, GeneralSecurityException {
+
+        try{
+            Optional<Admin> adminOptional = adminRepository.findById(admin_id);
+            if (adminOptional.isEmpty()){
+                throw new RuntimeException("You don't have access!!");
+            }
             List<Developer> developerList = developerRepository.findAll();
             return ExportExcelData.databasetoExcel(developerList);
-        } catch (IOException e) {
+        } catch (IOException e){
             throw new RuntimeException("Failed to export data to Excel", e);
-        } catch (GeneralSecurityException e) {
+        }catch (GeneralSecurityException e){
             throw new RuntimeException(e);
         }
+
     }
 }

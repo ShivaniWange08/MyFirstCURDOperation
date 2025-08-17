@@ -1,4 +1,4 @@
-package com.company.helper;
+package com.company.helperDeveloper;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

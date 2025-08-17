@@ -4,6 +4,8 @@ import com.company.entity.Developer;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.List;
 
 public interface DeveloperService {
@@ -30,5 +32,5 @@ public interface DeveloperService {
 
     List<Developer> excelToDeveloperList();
 
-    ByteArrayInputStream databaseToExcel();
+    ByteArrayInputStream databaseToExcel(int adminId)throws IOException, GeneralSecurityException;
 }
