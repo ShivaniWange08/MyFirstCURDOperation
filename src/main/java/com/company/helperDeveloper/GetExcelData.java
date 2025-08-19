@@ -1,6 +1,7 @@
 package com.company.helperDeveloper;
 
 import com.company.entity.Developer;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+@Slf4j
 public class GetExcelData {
 
     public static boolean checkExcelFormat(MultipartFile file) {

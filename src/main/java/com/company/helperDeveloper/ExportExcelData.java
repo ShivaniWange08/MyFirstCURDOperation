@@ -1,6 +1,7 @@
 package com.company.helperDeveloper;
 
 import com.company.entity.Developer;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -18,6 +19,7 @@ import java.io.*;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
+@Slf4j
 public class ExportExcelData {
 
     public static final String[] HEADERS={
@@ -32,6 +34,7 @@ public class ExportExcelData {
         //ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         try{
+            log.info("Starting Excel export for {} developers", developerList.size());
             //create sheet
            Sheet sheet = workbook.createSheet(SHEET_NAME);
 
@@ -66,6 +69,7 @@ public class ExportExcelData {
             try (FileOutputStream fos = new FileOutputStream(tempFile)) {
                 workbook.write(fos);
             }
+            log.info("Excel file created successfully at: {}", tempFile.getAbsolutePath());
 
             // ======== Password Protection ========
             String password = "root"; // <-- change this as needed
@@ -79,16 +83,19 @@ public class ExportExcelData {
                  OutputStream os = encryptor.getDataStream(fs)) {
                 opc.save(os);
             } catch (InvalidFormatException e) {
+                log.error("Invalid format while encrypting Excel", e);
                 throw new RuntimeException(e);
             }
             // Write encrypted file to byte array
             ByteArrayOutputStream encryptedOut = new ByteArrayOutputStream();
             fs.writeFilesystem(encryptedOut);
 
+            log.info("Excel export completed with password protection");
             return new ByteArrayInputStream(encryptedOut.toByteArray());
 
 
         }catch (IOException | GeneralSecurityException e) {
+            log.error("Failed to export and protect Excel", e);
             throw new RuntimeException("Failed to export and protect Excel", e);
         } finally {
             workbook.close();

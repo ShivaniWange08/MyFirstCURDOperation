@@ -1,7 +1,9 @@
 package com.company.helperDeveloper;
 
 import com.company.entity.Developer;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class DeveloperIdGenerator {
 
     public static String generatedDeveloperId(Developer developer){
@@ -16,7 +18,7 @@ public class DeveloperIdGenerator {
         int  b = YOB % 100;
 
         String userName = a+fName+b;
-        System.err.println("username is " +userName);
+        log.info("Generated DeveloperId is {}", userName);
         return userName;
     }
 }
