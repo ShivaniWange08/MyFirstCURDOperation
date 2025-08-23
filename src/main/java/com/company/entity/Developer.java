@@ -1,5 +1,7 @@
 package com.company.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,6 +12,9 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Setter
@@ -29,8 +34,9 @@ public class Developer {
     @Pattern(regexp = "^[A-Z][a-zA-Z]*$", message = "Last name must start with a capital letter and contain only letters")
     private String lNAme;
 
-    @Min(value = 18, message = "Age must be at least 18")
-    @Max(value = 60, message = "Age must not exceed 60")
+//    @Min(value = 18, message = "Age must be at least 18")
+//    @Max(value = 60, message = "Age must not exceed 60")
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private int age;
 
     @NotBlank(message = "Please Enter Your City")
@@ -45,7 +51,12 @@ public class Developer {
     @Min(value = 1950, message = "Please Enter Your Valid Year of Birth")
     private int YearOfBirth;
 
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private LocalDate dob;
+
     private String developerId;
+
+
 
 
 }

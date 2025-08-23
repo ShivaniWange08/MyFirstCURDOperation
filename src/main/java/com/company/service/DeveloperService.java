@@ -33,4 +33,6 @@ public interface DeveloperService {
     List<Developer> excelToDeveloperList();
 
     ByteArrayInputStream databaseToExcel(int adminId)throws IOException, GeneralSecurityException;
+
+    List<Developer> getDeveloperByAge(int age);
 }

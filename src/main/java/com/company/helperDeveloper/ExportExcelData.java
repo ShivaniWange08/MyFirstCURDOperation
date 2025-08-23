@@ -23,7 +23,7 @@ import java.util.List;
 public class ExportExcelData {
 
     public static final String[] HEADERS={
-            "id", "fName", "LName", "age", "city", "gender", "salary", "YearOfBirth", "developerId"
+            "id", "fName", "LName", "age", "city", "gender", "salary", "YearOfBirth", "dob", "developerId"
     };
 
     public static String SHEET_NAME = "developerExcel_data";
@@ -58,7 +58,8 @@ public class ExportExcelData {
                 dataRow.createCell(5).setCellValue(d.getGender());
                 dataRow.createCell(6).setCellValue(d.getSalary());
                 dataRow.createCell(7).setCellValue(d.getYearOfBirth());
-                dataRow.createCell(8).setCellValue(d.getDeveloperId());
+                dataRow.createCell(8).setCellValue(d.getDob() != null? d.getDob().toString() : "");
+                dataRow.createCell(9).setCellValue(d.getDeveloperId());
             }
             // to auto-size column
             for (int i = 0; i < HEADERS.length; i++) {

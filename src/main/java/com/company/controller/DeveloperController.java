@@ -182,5 +182,11 @@ public class DeveloperController {
             return ResponseEntity.internalServerError().body("Something went wrong: " + e.getMessage());
         }
     }
+
+    @GetMapping("/byAge/{age}")
+    public ResponseEntity<List<Developer>> getDeveloperbyAge(@PathVariable("age")int age){
+        List<Developer> developerList=developerService.getDeveloperByAge(age);
+        return new ResponseEntity<>(developerList, HttpStatus.OK);
+    }
 }
 

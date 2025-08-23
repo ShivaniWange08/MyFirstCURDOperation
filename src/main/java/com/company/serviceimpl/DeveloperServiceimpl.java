@@ -2,6 +2,7 @@ package com.company.serviceimpl;
 
 import com.company.entity.Admin;
 import com.company.entity.Developer;
+import com.company.exception.DeveloperNotFoundException;
 import com.company.helperDeveloper.DeveloperIdGenerator;
 import com.company.helperDeveloper.ExportExcelData;
 import com.company.helperDeveloper.GetExcelData;
@@ -16,9 +17,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static java.time.LocalTime.now;
 
 @Service
 @Slf4j
@@ -32,10 +37,19 @@ public class DeveloperServiceimpl implements DeveloperService {
 
     @Override
     public String saveDeveloper(Developer developer) {
-
+        //Generate DeveloperId
         String developerId = DeveloperIdGenerator.generatedDeveloperId(developer);
         log.info("Generated DeveloperId: {}", developerId);
         developer.setDeveloperId(developerId);
+
+        //Calculate Age from DOB
+        if(developer.getDob() != null){
+            int calculatedAge = Period.between(developer.getDob(), LocalDate.now()).getYears();
+            developer.setAge(calculatedAge);
+        }
+        else {
+            log.warn("DOB not provided for Developer: {}, Age not calculated", developer.getFName());
+        }
 
         Developer savedDeveloper = developerRepository.save(developer);
 
@@ -51,7 +65,7 @@ public class DeveloperServiceimpl implements DeveloperService {
 
     @Override
     public Developer getDeveloperById(int id) {
-     Developer developer = developerRepository.findById(id).orElseThrow(() -> new NullPointerException("Developer with id not found" +id));
+        Developer developer =  developerRepository.findById(id).orElseThrow(() -> new DeveloperNotFoundException("Developer with id not found " + id));
         log.info("Developer with id {}: {}", id, developer);
         return developer;
     }
@@ -71,9 +85,10 @@ public class DeveloperServiceimpl implements DeveloperService {
         log.info("Developer object with value to be updated {} ", newDeveloper);
         developer.setFName(newDeveloper.getFName());
         developer.setLNAme(newDeveloper.getLNAme());
-        developer.setAge(newDeveloper.getAge());
+        //developer.setAge(newDeveloper.getAge());
         developer.setCity(newDeveloper.getCity());
         developer.setSalary(newDeveloper.getSalary());
+        developer.setDob(newDeveloper.getDob());
 
         Developer updateDeveloper = developerRepository.save(developer);
         log.info("Developer with updated value {}", updateDeveloper);
@@ -82,10 +97,21 @@ public class DeveloperServiceimpl implements DeveloperService {
 
     @Override
     public List<Developer> savelistOfDeveloper(List<Developer> developerList) {
-        //List<Developer> developerList1 =
-                developerRepository.saveAll(developerList);
+        for(Developer developer : developerList){
+            //Generate DeveloperId
+            String developerId = DeveloperIdGenerator.generatedDeveloperId(developer);
+            developer.setDeveloperId(developerId);
+
+            //calculate age from dob
+            if(developer.getDob() != null){
+                int culAge = Period.between(developer.getDob(), LocalDate.now()).getYears();
+                developer.setAge(culAge);
+            }
+        }
+
+        List<Developer> savedDevelopers = developerRepository.saveAll(developerList);
                 log.info("{} Developer List :", developerList.size());
-        return developerList;
+        return savedDevelopers;
     }
 
     @Override
@@ -170,6 +196,13 @@ public class DeveloperServiceimpl implements DeveloperService {
             log.error("Excel security error", e);
             throw new RuntimeException(e);
         }
+
+    }
+
+    @Override
+    public List<Developer> getDeveloperByAge(int age) {
+        List<Developer> developerByAge =  developerRepository.findByAge(age);
+        return developerByAge;
 
     }
 }
